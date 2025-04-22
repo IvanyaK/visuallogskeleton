@@ -37,3 +37,4 @@ wheels/
 *.vsix
 
 *.xes
+*.csv
