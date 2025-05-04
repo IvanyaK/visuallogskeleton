@@ -4,7 +4,7 @@ from chardet import detect
 from pandas import DataFrame, read_csv
 from pm4py import discover_log_skeleton, format_dataframe, read_xes
 
-
+from visualize import visualize_model
 # Determines file format and retrieves event logs
 def getting_log(file_path: str) -> DataFrame:
     if file_path.split(".")[-1] == "xes":
@@ -38,8 +38,7 @@ def build_log_skeleton(log: DataFrame) -> Dict[str, Any]:
 def main() -> None:
     log = getting_log(input("Enter path to xes/csv file: "))
     res = build_log_skeleton(log)
-    print(res)
-
+    visualize_model(res)
 
 if __name__ == "__main__":
     main()
