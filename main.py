@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from chardet import detect
 from pandas import DataFrame, read_csv
 from pm4py import discover_log_skeleton, read_xes
 
@@ -9,7 +10,10 @@ def getting_log(file_path: str) -> DataFrame:
     if file_path.split(".")[-1] == "xes":
         return read_xes(file_path)
     if file_path.split(".")[-1] == "csv":
-        return read_csv(file_path)
+        with open(file_path, "rb") as f:
+            result = detect(f.read())
+        log = read_csv(file_path, encoding=result["encoding"])
+        return log
 
 
 # TODO: when import csv - exeption: the dataframe should (at least) contain a column of type date
