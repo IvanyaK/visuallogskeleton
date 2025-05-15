@@ -2,20 +2,17 @@ from typing import Any, Dict
 
 from chardet import detect
 from pandas import DataFrame, read_csv
-
 from pm4py import (
     discover_log_skeleton,
     format_dataframe,
     read_xes,
 )
-
 from pm4py.analysis import insert_artificial_start_end
 
 from visualize import visualize_model
 
 
 def getting_log(file_path: str) -> DataFrame:
-
     if file_path.lower().endswith(".xes"):
         log_df = read_xes(file_path)
 
@@ -24,18 +21,21 @@ def getting_log(file_path: str) -> DataFrame:
             result = detect(f.read())
 
         log_df = read_csv(file_path, encoding=result["encoding"])
-
-        case_id = input("Your case_id column: ")
-        activity_key = input("Your activity_key column: ")
-        timestamp_key = input("Your timestamp column: ")
-
-        log_df = format_dataframe(
-            log_df,
-            case_id=case_id,
-            activity_key=activity_key,
-            timestamp_key=timestamp_key,
-            timest_format="%Y-%m-%d %H:%M:%S",
-        )
+        while True:
+            case_id = input("Your case_id column: ")
+            activity_key = input("Your activity_key column: ")
+            timestamp_key = input("Your timestamp column: ")
+            try:
+                log_df = format_dataframe(
+                    log_df,
+                    case_id=case_id,
+                    activity_key=activity_key,
+                    timestamp_key=timestamp_key,
+                    timest_format="%Y-%m-%d %H:%M:%S",
+                )
+                break
+            except Exception:
+                print("Your values is not in the dataframe!")
     else:
         raise ValueError("Supported extensions: .xes or .csv")
 
@@ -49,13 +49,14 @@ def build_log_skeleton(log: DataFrame, noise: float = 0.9) -> Dict[str, Any]:
 
 
 def main() -> None:
-    path = input('Enter path to .xes / .csv file: ').strip('"')
+    path = input("Enter path to .xes / .csv file: ").strip('"').strip()
     log = getting_log(path)
 
     log_skeleton = build_log_skeleton(log)
-    #print(log_skeleton)    # Отладка       
+    # print(log_skeleton)    # Отладка
 
     visualize_model(log_skeleton)
+
 
 if __name__ == "__main__":
     main()
